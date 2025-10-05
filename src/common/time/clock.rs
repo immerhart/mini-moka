@@ -3,18 +3,16 @@ use std::{
     time::Instant as StdInstant,
 };
 
-#[cfg(test)]
 use std::time::Duration;
 
-pub(crate) type Instant = StdInstant;
+pub type Instant = StdInstant;
 
-pub(crate) struct Clock {
+pub struct Clock {
     mock: Option<Arc<Mock>>,
 }
 
 impl Clock {
-    #[cfg(test)]
-    pub(crate) fn mock() -> (Clock, Arc<Mock>) {
+    pub fn mock() -> (Clock, Arc<Mock>) {
         let mock = Arc::new(Mock::default());
         let clock = Clock {
             mock: Some(Arc::clone(&mock)),
@@ -22,7 +20,7 @@ impl Clock {
         (clock, mock)
     }
 
-    pub(crate) fn now(&self) -> Instant {
+    pub fn now(&self) -> Instant {
         if let Some(mock) = &self.mock {
             *mock.now.read().expect("lock poisoned")
         } else {
@@ -31,7 +29,7 @@ impl Clock {
     }
 }
 
-pub(crate) struct Mock {
+pub struct Mock {
     now: RwLock<Instant>,
 }
 
@@ -43,9 +41,8 @@ impl Default for Mock {
     }
 }
 
-#[cfg(test)]
 impl Mock {
-    pub(crate) fn increment(&self, amount: Duration) {
+    pub fn increment(&self, amount: Duration) {
         *self.now.write().expect("lock poisoned") += amount;
     }
 }

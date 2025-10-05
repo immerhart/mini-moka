@@ -982,16 +982,12 @@ where
     }
 }
 
-//
-// for testing
-//
-#[cfg(test)]
 impl<K, V, S> Cache<K, V, S>
 where
     K: Hash + Eq,
     S: BuildHasher + Clone,
 {
-    fn set_expiration_clock(&mut self, clock: Option<crate::common::time::Clock>) {
+    pub fn set_expiration_clock(&mut self, clock: Option<crate::common::time::Clock>) {
         self.expiration_clock = clock;
     }
 }
