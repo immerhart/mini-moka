@@ -7,6 +7,7 @@ use std::time::Duration;
 
 pub type Instant = StdInstant;
 
+#[derive(Clone)]
 pub struct Clock {
     mock: Option<Arc<Mock>>,
 }
