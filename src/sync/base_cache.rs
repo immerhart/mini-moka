@@ -363,6 +363,17 @@ where
     }
 }
 
+impl<K, V, S> BaseCache<K, V, S>
+where
+    K: Hash + Eq + Send + Sync + 'static,
+    V: Clone + Send + Sync + 'static,
+    S: BuildHasher + Clone + Send + Sync + 'static,
+{
+    pub fn set_expiration_clock(&self, clock: Option<Clock>) {
+        self.inner.set_expiration_clock(clock);
+    }
+}
+
 //
 // for testing
 //
@@ -376,10 +387,6 @@ where
     pub(crate) fn reconfigure_for_testing(&mut self) {
         // Enable the frequency sketch.
         self.inner.enable_frequency_sketch_for_testing();
-    }
-
-    pub(crate) fn set_expiration_clock(&self, clock: Option<Clock>) {
-        self.inner.set_expiration_clock(clock);
     }
 }
 
@@ -1231,16 +1238,12 @@ where
     }
 }
 
-//
-// for testing
-//
-#[cfg(test)]
 impl<K, V, S> Inner<K, V, S>
 where
     K: Hash + Eq,
     S: BuildHasher + Clone,
 {
-    fn set_expiration_clock(&self, clock: Option<Clock>) {
+    pub fn set_expiration_clock(&self, clock: Option<Clock>) {
         let mut exp_clock = self.expiration_clock.write().expect("lock poisoned");
         if let Some(clock) = clock {
             *exp_clock = Some(clock);
